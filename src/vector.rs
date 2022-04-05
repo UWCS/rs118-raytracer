@@ -44,11 +44,7 @@ impl Vec3 {
     }
 
     pub fn to_rgb(self) -> image::Rgb<u8> {
-        image::Rgb(
-            [self.x, self.y, self.z]
-                .map(f64::sqrt)
-                .map(|c| (c * 255.999) as u8),
-        )
+        image::Rgb([self.x, self.y, self.z].map(|c| (c * 255.999) as u8))
     }
 
     pub fn map<F>(self, mut f: F) -> Vec3
