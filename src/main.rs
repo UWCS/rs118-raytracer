@@ -1,3 +1,5 @@
+mod vector;
+
 use image::{Rgb, RgbImage};
 fn main() {
     let (width, height) = (600, 400);
