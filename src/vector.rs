@@ -8,6 +8,16 @@ pub struct Vec3 {
     pub z: f64,
 }
 
+#[macro_export]
+macro_rules! v {
+    ($x:expr, $y: expr, $z: expr) => {
+        Vec3::new(f64::from($x), f64::from($y), f64::from($z))
+    };
+    ($x:expr) => {
+        Vec3::new(f64::from($x), f64::from($x), f64::from($x))
+    };
+}
+
 pub type Point = Vec3;
 pub type Colour = Vec3;
 
