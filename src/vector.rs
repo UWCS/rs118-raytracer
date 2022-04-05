@@ -27,8 +27,7 @@ impl Vec3 {
     }
 
     pub fn normalise(self) -> Self {
-        let l = self.len();
-        self.map(|x| x / l)
+        self / self.len()
     }
 
     pub fn dot(&self, other: &Self) -> f64 {
