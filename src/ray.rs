@@ -1,6 +1,9 @@
 use derive_more::Constructor;
 
-use crate::vector::{Point, Vec3};
+use crate::{
+    v,
+    vector::{Colour, Point, Vec3},
+};
 
 #[derive(Debug, PartialEq, PartialOrd, Clone, Constructor)]
 pub struct Ray {
@@ -12,4 +15,8 @@ impl Ray {
     pub fn at(&self, t: f64) -> Point {
         self.origin + self.direction * t
     }
+}
+
+pub fn colour(_: &Ray) -> Colour {
+    v!(0, 1.0, 0)
 }
