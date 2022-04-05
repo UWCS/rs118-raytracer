@@ -1,3 +1,7 @@
+use derive_more::{Add, Constructor, Div, Mul, Neg, Sub};
+use std::ops::Mul;
+
+#[derive(Debug, PartialEq, PartialOrd, Clone, Copy, Add, Div, Mul, Sub, Neg, Constructor)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
@@ -45,6 +49,26 @@ impl Vec3 {
             x: f(self.x),
             y: f(self.y),
             z: f(self.z),
+        }
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        rhs.map(|x| x * self)
+    }
+}
+
+impl Mul for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
         }
     }
 }
