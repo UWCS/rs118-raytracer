@@ -1,7 +1,7 @@
 use derive_more::Constructor;
 
 use crate::{
-    v,
+    object, v,
     vector::{Colour, Point, Vec3},
 };
 
@@ -19,6 +19,10 @@ impl Ray {
 }
 
 pub fn colour(ray: &Ray) -> Colour {
+    if object::Sphere::new(v!(0, 0, -1), 0.5).hit(ray) {
+        return v!(1, 0, 0);
+    }
+
     let direction = ray.direction.normalise();
     let t = 0.5 * (direction.normalise().y + 1.0); //scale from -1 < y < 1 to  0 < t < 1
 

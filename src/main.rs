@@ -1,3 +1,4 @@
+mod object;
 mod ray;
 mod vector;
 
@@ -17,7 +18,7 @@ fn main() {
     let focal_length = 1.0;
 
     //geometry
-    let origin: Point = v!(0, 0, 0);
+    let origin: Point = v!(0);
     let horizontal: Vec3 = v!(view_width, 0, 0); //horizontal size vector
     let vertical: Vec3 = v!(0, -view_height, 0); //vertical size vector, negated because we start in the top left and move *down* when rendering
     let top_left: Point = origin - horizontal / 2.0 - vertical / 2.0 - v!(0, 0, focal_length); //the position of the top left corner of our imgae
