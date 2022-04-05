@@ -1,3 +1,4 @@
+mod ray;
 mod vector;
 
 use image::{Rgb, RgbImage};
