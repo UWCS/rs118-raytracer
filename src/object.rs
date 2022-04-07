@@ -1,7 +1,23 @@
 use derive_more::Constructor;
 
-use crate::{ray::Ray, vector::Point};
+use crate::{
+    ray::Ray,
+    vector::{Point, Vec3},
+};
 
+//Information about a ray-object intersection
+pub struct Hit {
+    pub impact_point: Point,
+    pub normal: Vec3,
+    pub paramater: f64,
+}
+
+// Represents objects within the scene
+pub trait Object {
+    //determines if an object has been hit by a ray
+    //returns the impace point, the surfac normal to the impact point, and the solution to the impact equation
+    fn hit(&self, ray: &Ray, bounds: (f64, f64)) -> Option<Hit>;
+}
 //a sphere
 #[derive(Debug, Constructor)]
 pub struct Sphere {
@@ -9,19 +25,35 @@ pub struct Sphere {
     radius: f64,
 }
 
-//calculate ray-sphere intersection stuff
-impl Sphere {
-    pub fn hit(&self, ray: &Ray) -> Option<f64> {
+impl Object for Sphere {
+    fn hit(&self, ray: &Ray, bounds: (f64, f64)) -> Option<Hit> {
+        //calculate intersection
         let oc = ray.origin - self.center;
         let a = ray.direction.dot(&ray.direction);
         let b = 2.0 * oc.dot(&ray.direction);
         let c = oc.dot(&oc) - self.radius * self.radius;
-        let discriminant = b * b - 4.0 * a * c;
         let d = b * b - 4.0 * a * c;
+
         if d < 0.0 {
-            None
-        } else {
-            Some((-b - d.sqrt()) / (a * 2.0))
+            return None;
         }
+
+        //get the correct root, if one lies in the bounds
+        let mut root = (-b - d.sqrt()) / (2.0 * a);
+        if !(bounds.0..bounds.1).contains(&root) {
+            root = (-b + d.sqrt()) / (2.0 * a);
+            if !(bounds.0..bounds.1).contains(&root) {
+                return None;
+            }
+        }
+
+        let impact_point = ray.at(root);
+        let normal = (impact_point - self.center) / self.radius;
+
+        Some(Hit {
+            impact_point,
+            normal,
+            paramater: root,
+        })
     }
 }
