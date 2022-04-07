@@ -1,7 +1,7 @@
 use derive_more::Constructor;
 
 use crate::{
-    object::{self, Object},
+    object::Object,
     v,
     vector::{Colour, Point, Vec3},
 };
@@ -19,8 +19,8 @@ impl Ray {
     }
 }
 
-pub fn colour(ray: &Ray) -> Colour {
-    if let Some(hit) = object::Sphere::new(v!(0, 0, -1), 0.5).hit(ray, (0.0, f64::INFINITY)) {
+pub fn colour(scene: &impl Object, ray: &Ray) -> Colour {
+    if let Some(hit) = scene.hit(ray, (0.0, f64::INFINITY)) {
         (hit.normal + v!(1)) / 2.0
     } else {
         let direction = ray.direction.normalise();

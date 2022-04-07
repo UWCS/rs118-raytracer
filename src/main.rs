@@ -3,6 +3,7 @@ mod ray;
 mod vector;
 
 use image::RgbImage;
+use object::{Scene, Sphere};
 use ray::Ray;
 use rayon::prelude::*;
 use vector::{Point, Vec3};
@@ -26,6 +27,12 @@ fn main() {
 
     let mut buffer = RgbImage::new(img_width, img_height);
 
+    //world
+    let objects: Scene = vec![
+        Box::new(Sphere::new(v!(0, 0, -1), 0.5)),
+        Box::new(Sphere::new(v!(0, -100.5, -1), 100.0)),
+    ];
+
     buffer
         .enumerate_pixels_mut()
         .par_bridge() // Rayon go brrrrrrr
@@ -40,7 +47,7 @@ fn main() {
             let ray_direction: Vec3 = top_left + u * horizontal + v * vertical - origin;
 
             //save pixel colour to buffer
-            *px = ray::colour(&Ray::new(origin, ray_direction)).to_rgb();
+            *px = ray::colour(&objects, &Ray::new(origin, ray_direction)).to_rgb();
         });
     buffer.save("render.png").expect("Could not save image");
 }
