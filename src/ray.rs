@@ -19,17 +19,18 @@ impl Ray {
 }
 
 pub fn colour(ray: &Ray) -> Colour {
-    if object::Sphere::new(v!(0, 0, -1), 0.5).hit(ray) {
-        return v!(1, 0, 0);
+    if let Some(t) = object::Sphere::new(v!(0, 0, -1), 0.5).hit(ray) {
+        let normal = (ray.at(t) - v!(0, 0, -1)).normalise();
+        (normal + v!(1)) / 2.0
+    } else {
+        let direction = ray.direction.normalise();
+        let t = 0.5 * (direction.normalise().y + 1.0); //scale from -1 < y < 1 to  0 < t < 1
+
+        //two colours to blend
+        let white: Colour = v!(1);
+        let blue: Colour = v!(0.5, 0.7, 1);
+
+        //blend
+        blue * t + white * (1.0 - t)
     }
-
-    let direction = ray.direction.normalise();
-    let t = 0.5 * (direction.normalise().y + 1.0); //scale from -1 < y < 1 to  0 < t < 1
-
-    //two colours to blend
-    let white: Colour = v!(1);
-    let blue: Colour = v!(0.5, 0.7, 1);
-
-    //blend
-    blue * t + white * (1.0 - t)
 }
