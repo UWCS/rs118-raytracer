@@ -67,3 +67,15 @@ impl Object for Sphere {
         })
     }
 }
+
+//make a list of objects representing a scene an object we can impact, returning the impact of the closest one
+
+pub type Scene = Vec<Box<dyn Object + Sync>>;
+
+impl Object for Scene {
+    fn hit(&self, ray: &Ray, bounds: (f64, f64)) -> Option<Hit> {
+        self.iter()
+            .filter_map(|o| o.hit(ray, bounds)) //filter out the ones that don't intersect
+            .min_by(|h1, h2| h1.paramater.partial_cmp(&h2.paramater).unwrap()) //sort by smallest parameter, returning lowest
+    }
+}
