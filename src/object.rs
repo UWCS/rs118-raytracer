@@ -10,6 +10,7 @@ pub struct Hit {
     pub impact_point: Point,
     pub normal: Vec3,
     pub paramater: f64,
+    pub front_face: bool,
 }
 
 // Represents objects within the scene
@@ -50,10 +51,19 @@ impl Object for Sphere {
         let impact_point = ray.at(root);
         let normal = (impact_point - self.center) / self.radius;
 
+        //make sure the normals always point outward from the sphere's surface
+        //against the indicent ray
+        let (normal, front_face) = if ray.direction.dot(&normal) > 0.0 {
+            (-normal, false)
+        } else {
+            (normal, true)
+        };
+
         Some(Hit {
             impact_point,
             normal,
             paramater: root,
+            front_face,
         })
     }
 }
