@@ -13,6 +13,7 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let img_width: u32 = 400;
     let img_height = (img_width as f64 / aspect_ratio) as u32;
+    let samples: u32 = 100;
 
     //camera and viewport
     let view_height = 2.0;
@@ -37,17 +38,20 @@ fn main() {
         .enumerate_pixels_mut()
         .par_bridge() // Rayon go brrrrrrr
         .for_each(|(i, j, px)| {
-            // Same loop body as before, but as an iterator
             //pixel coordinates as scalars from 0.0 <= t <= 1.0
-            let u = i as f64 / (img_width - 1) as f64;
-            let v = j as f64 / (img_height - 1) as f64;
+            //add a little randomness for antialiasing
+            let mut colour = v!(0);
+            for _ in 0..samples {
+                let u = (i as f64 + rand::random::<f64>()) / (img_width - 1) as f64;
+                let v = (j as f64 + rand::random::<f64>()) / (img_height - 1) as f64;
 
-            //the direction of the ray
-            //start at top left, then go horizontally scaled by u and vertically by v
-            let ray_direction: Vec3 = top_left + u * horizontal + v * vertical - origin;
-
+                //the direction of the ray
+                //start at top left, then go horizontally scaled by u and vertically by v
+                let ray_direction: Vec3 = top_left + u * horizontal + v * vertical - origin;
+                colour = colour + ray::colour(&objects, &Ray::new(origin, ray_direction));
+            }
             //save pixel colour to buffer
-            *px = ray::colour(&objects, &Ray::new(origin, ray_direction)).to_rgb();
+            *px = (colour / (samples as f64)).to_rgb();
         });
     buffer.save("render.png").expect("Could not save image");
 }
