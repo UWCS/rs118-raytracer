@@ -16,9 +16,10 @@ fn main() {
     let img_height = (img_width as f64 / aspect_ratio) as u32;
     let samples: u32 = 100;
 
-    //camera and viewport
+    //camera struct
     let camera = camera::Camera::default();
 
+    //create image buffer
     let mut buffer = RgbImage::new(img_width, img_height);
 
     //world
@@ -41,7 +42,7 @@ fn main() {
     buffer
         .enumerate_pixels_mut()
         .par_bridge() // Rayon go brrrrrrr
-        .progress_with(bar)
+        .progress_with(bar) // Indicatif go brrrrrr
         .for_each(|(i, j, px)| {
             //pixel coordinates as scalars from 0.0 <= t <= 1.0
             //add a little randomness for antialiasing
@@ -50,8 +51,7 @@ fn main() {
                 let u = (i as f64 + rand::random::<f64>()) / (img_width - 1) as f64;
                 let v = (j as f64 + rand::random::<f64>()) / (img_height - 1) as f64;
 
-                //the direction of the ray
-                //start at top left, then go horizontally scaled by u and vertically by v
+                //get the ray from the camera and then colour it
                 let ray = camera.get_ray(u, v);
                 colour = colour + ray::colour(&objects, &ray);
             }
