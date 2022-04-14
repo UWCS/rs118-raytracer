@@ -38,3 +38,29 @@ impl Material for Lambertian {
         })
     }
 }
+
+#[derive(Debug, Constructor)]
+pub struct Metal(Colour);
+
+impl Material for Metal {
+    fn scatter(&self, incident_ray: &Ray, hit: &Hit) -> Option<Reflection> {
+        //the reflected ray direction
+        let reflection = reflect(incident_ray.direction, &hit.normal);
+
+        //the scattered ray
+        let scattered = Ray::new(hit.impact_point, reflection);
+
+        if scattered.direction.dot(&hit.normal) > 0.0 {
+            Some(Reflection {
+                ray: scattered,
+                colour_attenuation: self.0,
+            })
+        } else {
+            None
+        }
+    }
+}
+
+fn reflect(v: Vec3, normal: &Vec3) -> Vec3 {
+    v - 2.0 * v.dot(normal) * *normal
+}

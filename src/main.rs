@@ -10,7 +10,7 @@ use object::{Scene, Sphere};
 use rayon::prelude::*;
 use vector::{Point, Vec3};
 
-use crate::material::Lambertian;
+use crate::material::{Lambertian, Metal};
 
 fn main() {
     //image
@@ -28,11 +28,29 @@ fn main() {
 
     //world
     let objects: Scene = vec![
-        Box::new(Sphere::new(v!(0, 0, -1), 0.5, Lambertian::new(v!(0.5)))),
         Box::new(Sphere::new(
+            //center
+            v!(0, 0, -1),
+            0.5,
+            Lambertian::new(v!(0.7, 0.3, 0.3)),
+        )),
+        Box::new(Sphere::new(
+            //ground
             v!(0, -100.5, -1),
             100.0,
-            Lambertian::new(v!(0.5)),
+            Lambertian::new(v!(0.8, 0.8, 0.0)),
+        )),
+        Box::new(Sphere::new(
+            //left
+            v!(-1.0, 0.0, -1.0),
+            0.5,
+            Metal::new(v!(0.8, 0.8, 0.8)),
+        )),
+        Box::new(Sphere::new(
+            //right
+            v!(1.0, 0.0, -1.0),
+            0.5,
+            Metal::new(v!(0.8, 0.6, 0.2)),
         )),
     ];
 
