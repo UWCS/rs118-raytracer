@@ -4,6 +4,7 @@ mod ray;
 mod vector;
 
 use image::RgbImage;
+use indicatif::{ParallelProgressIterator, ProgressBar, ProgressFinish, ProgressStyle};
 use object::{Scene, Sphere};
 use rayon::prelude::*;
 use vector::{Point, Vec3};
@@ -26,9 +27,21 @@ fn main() {
         Box::new(Sphere::new(v!(0, -100.5, -1), 100.0)),
     ];
 
+    println!("Rendering Scene...");
+    let bar = ProgressBar::new((img_width * img_height) as u64);
+    bar.set_style(
+        ProgressStyle::default_bar()
+            .template(
+                "{spinner:.green} [{wide_bar:.green/white}] {percent}% - {elapsed_precise} elapsed {msg}",
+            )
+            .progress_chars("#>-")
+            .on_finish(ProgressFinish::WithMessage("-- Done!".into())),
+    );
+
     buffer
         .enumerate_pixels_mut()
         .par_bridge() // Rayon go brrrrrrr
+        .progress_with(bar)
         .for_each(|(i, j, px)| {
             //pixel coordinates as scalars from 0.0 <= t <= 1.0
             //add a little randomness for antialiasing
