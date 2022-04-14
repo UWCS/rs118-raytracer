@@ -1,7 +1,9 @@
 use derive_more::Constructor;
 
 use crate::{
+    material::{Material, Reflection},
     ray::Ray,
+    v,
     vector::{Point, Vec3},
 };
 
@@ -11,6 +13,7 @@ pub struct Hit {
     pub normal: Vec3,
     pub paramater: f64,
     pub front_face: bool,
+    pub reflection: Option<Reflection>,
 }
 
 // Represents objects within the scene
@@ -21,12 +24,13 @@ pub trait Object {
 }
 //a sphere
 #[derive(Debug, Constructor)]
-pub struct Sphere {
+pub struct Sphere<M: Material> {
     center: Point,
     radius: f64,
+    material: M,
 }
 
-impl Object for Sphere {
+impl<M: Material> Object for Sphere<M> {
     fn hit(&self, ray: &Ray, bounds: (f64, f64)) -> Option<Hit> {
         //calculate intersection
         let oc = ray.origin - self.center;
@@ -58,13 +62,16 @@ impl Object for Sphere {
         } else {
             (normal, true)
         };
-
-        Some(Hit {
+        let mut h = Hit {
             impact_point,
             normal,
             paramater: root,
             front_face,
-        })
+            reflection: None,
+        };
+
+        h.reflection = self.material.scatter(ray, &h);
+        Some(h)
     }
 }
 

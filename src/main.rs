@@ -1,4 +1,5 @@
 mod camera;
+mod material;
 mod object;
 mod ray;
 mod vector;
@@ -8,6 +9,8 @@ use indicatif::{ParallelProgressIterator, ProgressBar, ProgressFinish, ProgressS
 use object::{Scene, Sphere};
 use rayon::prelude::*;
 use vector::{Point, Vec3};
+
+use crate::material::Lambertian;
 
 fn main() {
     //image
@@ -25,8 +28,12 @@ fn main() {
 
     //world
     let objects: Scene = vec![
-        Box::new(Sphere::new(v!(0, 0, -1), 0.5)),
-        Box::new(Sphere::new(v!(0, -100.5, -1), 100.0)),
+        Box::new(Sphere::new(v!(0, 0, -1), 0.5, Lambertian::new(v!(0.5)))),
+        Box::new(Sphere::new(
+            v!(0, -100.5, -1),
+            100.0,
+            Lambertian::new(v!(0.5)),
+        )),
     ];
 
     println!("Rendering Scene...");

@@ -25,9 +25,11 @@ pub fn colour(scene: &impl Object, ray: &Ray, depth: u8) -> Colour {
     }
 
     if let Some(hit) = scene.hit(ray, (0.00001, f64::INFINITY)) {
-        let direction = hit.normal + Vec3::rand_unit();
-        let origin = hit.impact_point;
-        0.5 * colour(scene, &Ray::new(origin, direction), depth - 1)
+        if let Some(reflection) = hit.reflection {
+            reflection.colour_attenuation * colour(scene, &reflection.ray, depth - 1)
+        } else {
+            v!(0, 0, 0)
+        }
     } else {
         let direction = ray.direction.normalise();
         let t = 0.5 * (direction.normalise().y + 1.0); //scale from -1 < y < 1 to  0 < t < 1
