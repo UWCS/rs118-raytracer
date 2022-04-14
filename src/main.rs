@@ -15,6 +15,7 @@ fn main() {
     let img_width: u32 = 400;
     let img_height = (img_width as f64 / aspect_ratio) as u32;
     let samples: u32 = 100;
+    let max_depth = 50;
 
     //camera struct
     let camera = camera::Camera::default();
@@ -53,7 +54,7 @@ fn main() {
 
                 //get the ray from the camera and then colour it
                 let ray = camera.get_ray(u, v);
-                colour = colour + ray::colour(&objects, &ray);
+                colour = colour + ray::colour(&objects, &ray, max_depth);
             }
             //save pixel colour to buffer
             *px = (colour / (samples as f64)).to_rgb();

@@ -34,6 +34,19 @@ impl Vec3 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
+    pub fn rand_unit() -> Self {
+        loop {
+            //random f64 range 0-1, scale it -1 to 1
+            let v = v!(rand::random::<f64>() * 2.0 - 1.0);
+
+            //if the vector lies in the unit sphere
+            if v.len() < 1.0 {
+                //normalise so it lies *on* the sphere and is a unit vector
+                break v.normalise();
+            }
+        }
+    }
+
     pub fn cross(&self, other: &Self) -> Self {
         Self {
             x: self.y * other.z - self.z * other.y,
