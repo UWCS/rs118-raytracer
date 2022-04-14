@@ -3,7 +3,6 @@ use derive_more::Constructor;
 use crate::{
     material::{Material, Reflection},
     ray::Ray,
-    v,
     vector::{Point, Vec3},
 };
 

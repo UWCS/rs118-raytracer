@@ -34,6 +34,11 @@ impl Vec3 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
+    pub fn is_zero(&self) -> bool {
+        let tolerance: f64 = 1e-8;
+        self.x.abs() < tolerance && self.y.abs() < tolerance && self.z.abs() < tolerance
+    }
+
     pub fn rand_unit() -> Self {
         loop {
             //random f64 range 0-1, scale it -1 to 1

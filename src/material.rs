@@ -22,7 +22,13 @@ pub struct Lambertian(Colour);
 impl Material for Lambertian {
     fn scatter(&self, _: &Ray, hit: &Hit) -> Option<Reflection> {
         //calculate reflected ray
-        let scatter_direction = hit.normal + Vec3::rand_unit();
+        let mut scatter_direction = hit.normal + Vec3::rand_unit();
+
+        //account for possible zero direction
+        if scatter_direction.is_zero() {
+            scatter_direction = hit.normal;
+        }
+
         let reflected_ray = Ray::new(hit.impact_point, scatter_direction);
 
         //return it, along with the colour attenuation of it for this material
