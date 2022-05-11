@@ -72,8 +72,18 @@ pub struct Dielectric(f64);
 impl Material for Dielectric {
     fn scatter(&self, incident_ray: &Ray, hit: &Hit) -> Option<Reflection> {
         let ratio = if hit.front_face { 1.0 / self.0 } else { self.0 };
-        let refracted = refract(incident_ray.direction.normalise(), &hit.normal, ratio);
-        let out_ray = Ray::new(hit.impact_point, refracted);
+        let unit_direction = incident_ray.direction.normalise();
+
+        let cos_theta = -unit_direction.dot(&hit.normal);
+        let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
+
+        let scatter_direction = if (ratio * sin_theta) > 1.0 {
+            reflect(unit_direction, &hit.normal)
+        } else {
+            refract(unit_direction, &hit.normal, ratio)
+        };
+
+        let out_ray = Ray::new(hit.impact_point, scatter_direction);
         Some(Reflection {
             ray: out_ray,
             colour_attenuation: v!(1),
