@@ -6,11 +6,10 @@ mod vector;
 
 use image::RgbImage;
 use indicatif::{ParallelProgressIterator, ProgressBar, ProgressFinish, ProgressStyle};
+use material::{Dielectric, Lambertian, Metal};
 use object::{Scene, Sphere};
 use rayon::prelude::*;
 use vector::{Point, Vec3};
-
-use crate::material::{Lambertian, Metal};
 
 fn main() {
     //image
@@ -44,7 +43,7 @@ fn main() {
             //left
             v!(-1.0, 0.0, -1.0),
             0.5,
-            Metal::new(v!(0.8, 0.8, 0.8), 0.3),
+            Dielectric::new(1.5),
         )),
         Box::new(Sphere::new(
             //right

@@ -3,6 +3,7 @@ use derive_more::Constructor;
 use crate::{
     object::Hit,
     ray::Ray,
+    v,
     vector::{Colour, Vec3},
 };
 
@@ -62,6 +63,21 @@ impl Material for Metal {
         } else {
             None
         }
+    }
+}
+
+#[derive(Debug, Constructor)]
+pub struct Dielectric(f64);
+
+impl Material for Dielectric {
+    fn scatter(&self, incident_ray: &Ray, hit: &Hit) -> Option<Reflection> {
+        let ratio = if hit.front_face { 1.0 / self.0 } else { self.0 };
+        let refracted = refract(incident_ray.direction.normalise(), &hit.normal, ratio);
+        let out_ray = Ray::new(hit.impact_point, refracted);
+        Some(Reflection {
+            ray: out_ray,
+            colour_attenuation: v!(1),
+        })
     }
 }
 
