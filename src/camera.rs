@@ -8,19 +8,17 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn default() -> Self {
-        let aspect_ratio = 16.0 / 9.0;
+    pub fn new(fov: f64, aspect_ratio: f64) -> Self {
+        let theta = fov.to_radians();
+        let h = f64::tan(theta / 2.0);
+        let view_height = 2.0 * h;
+        let view_width = aspect_ratio * view_height;
 
-        //viewport info
-        let viewport_height = 2.0;
-        let viewport_width = aspect_ratio * viewport_height;
         let focal_length = 1.0;
 
-        //geometry stuff
         let origin: Point = v!(0, 0, 0);
-        let horizontal = v!(viewport_width, 0, 0);
-        let vertical = v!(0, -viewport_height, 0); //negative so we go down the image when we add it to another vector
-
+        let horizontal = v!(view_width, 0, 0);
+        let vertical = v!(0, -view_height, 0);
         //the top  left of our image is the origin, -1 away from the camera and up and right by half the height/width
         let top_left: Point = origin - horizontal / 2.0 - vertical / 2.0 - v!(0, 0, focal_length);
 

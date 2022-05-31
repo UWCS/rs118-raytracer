@@ -6,7 +6,7 @@ mod vector;
 
 use image::RgbImage;
 use indicatif::{ParallelProgressIterator, ProgressBar, ProgressFinish, ProgressStyle};
-use material::{Dielectric, Lambertian, Metal};
+use material::Lambertian;
 use object::{Scene, Sphere};
 use rayon::prelude::*;
 use vector::{Point, Vec3};
@@ -20,36 +20,25 @@ fn main() {
     let max_depth = 50;
 
     //camera struct
-    let camera = camera::Camera::default();
+    let camera = camera::Camera::new(90.0, aspect_ratio);
 
     //create image buffer
     let mut buffer = RgbImage::new(img_width, img_height);
 
     //world
+    let r = f64::cos(std::f64::consts::PI / 4.0);
     let objects: Scene = vec![
         Box::new(Sphere::new(
             //center
-            v!(0, 0, -1),
-            0.5,
-            Lambertian::new(v!(0.7, 0.3, 0.3)),
+            v!(-r, 0, -1),
+            r,
+            Lambertian::new(v!(0, 0, 1)),
         )),
         Box::new(Sphere::new(
             //ground
-            v!(0, -100.5, -1),
-            100.0,
-            Lambertian::new(v!(0.8, 0.8, 0.0)),
-        )),
-        Box::new(Sphere::new(
-            //left
-            v!(-1.0, 0.0, -1.0),
-            0.5,
-            Dielectric::new(1.5),
-        )),
-        Box::new(Sphere::new(
-            //right
-            v!(1.0, 0.0, -1.0),
-            0.5,
-            Metal::new(v!(0.8, 0.6, 0.2), 1.0),
+            v!(r, 0, -1),
+            r,
+            Lambertian::new(v!(1, 0, 0)),
         )),
     ];
 
