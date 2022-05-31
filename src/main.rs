@@ -22,7 +22,17 @@ fn main() {
     let max_depth = 50;
 
     //camera struct
-    let camera = camera::Camera::new(v!(-2, 2, 1), v!(0, 0, -1), v!(0, 1, 0), 20.0, aspect_ratio);
+    let look_from = v!(3, 3, 2);
+    let look_at = v!(0, 0, -1);
+    let camera = camera::Camera::new(
+        look_from,
+        look_at,
+        v!(0, 1, 0),
+        20.0,
+        aspect_ratio,
+        2.0,
+        (look_from - look_at).len(),
+    );
 
     //create image buffer
     let mut buffer = RgbImage::new(img_width, img_height);
