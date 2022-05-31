@@ -77,11 +77,12 @@ impl Material for Dielectric {
         let cos_theta = -unit_direction.dot(&hit.normal);
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
-        let scatter_direction = if (ratio * sin_theta) > 1.0 {
-            reflect(unit_direction, &hit.normal)
-        } else {
-            refract(unit_direction, &hit.normal, ratio)
-        };
+        let scatter_direction =
+            if (ratio * sin_theta > 1.0) || reflectance(cos_theta, ratio) > rand::random() {
+                reflect(unit_direction, &hit.normal)
+            } else {
+                refract(unit_direction, &hit.normal, ratio)
+            };
 
         let out_ray = Ray::new(hit.impact_point, scatter_direction);
         Some(Reflection {
@@ -100,4 +101,9 @@ fn refract(incident: Vec3, normal: &Vec3, ratio: f64) -> Vec3 {
     let r_out_perp = ratio * (incident + cos_theta * *normal);
     let r_out_par = -(1.0 - r_out_perp.dot(&r_out_perp)).abs().sqrt() * *normal;
     r_out_par + r_out_perp
+}
+
+fn reflectance(cos_theta: f64, n: f64) -> f64 {
+    let r0 = f64::powi((1.0 - n) / (1.0 + n), 2);
+    r0 + (1.0 - r0) * f64::powi(1.0 - cos_theta, 5)
 }
