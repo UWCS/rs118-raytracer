@@ -1,4 +1,4 @@
-use crate::{ray::Ray, v, Point, Vec3};
+use crate::{ray::Ray, Point, Vec3};
 
 pub struct Camera {
     origin: Point,
@@ -8,19 +8,21 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(fov: f64, aspect_ratio: f64) -> Self {
+    pub fn new(look_from: Point, look_at: Point, vup: Vec3, fov: f64, aspect_ratio: f64) -> Self {
         let theta = fov.to_radians();
         let h = f64::tan(theta / 2.0);
         let view_height = 2.0 * h;
         let view_width = aspect_ratio * view_height;
 
-        let focal_length = 1.0;
+        let w = (look_from - look_at).normalise();
+        let u = vup.cross(&w).normalise();
+        let v = w.cross(&u);
 
-        let origin: Point = v!(0, 0, 0);
-        let horizontal = v!(view_width, 0, 0);
-        let vertical = v!(0, -view_height, 0);
-        //the top  left of our image is the origin, -1 away from the camera and up and right by half the height/width
-        let top_left: Point = origin - horizontal / 2.0 - vertical / 2.0 - v!(0, 0, focal_length);
+        let origin = look_from;
+        let horizontal = view_width * u;
+        let vertical = -view_height * v;
+
+        let top_left: Point = origin - horizontal / 2.0 - vertical / 2.0 - w;
 
         Camera {
             origin,

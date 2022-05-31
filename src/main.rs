@@ -11,6 +11,8 @@ use object::{Scene, Sphere};
 use rayon::prelude::*;
 use vector::{Point, Vec3};
 
+use crate::material::{Dielectric, Metal};
+
 fn main() {
     //image
     let aspect_ratio = 16.0 / 9.0;
@@ -20,25 +22,28 @@ fn main() {
     let max_depth = 50;
 
     //camera struct
-    let camera = camera::Camera::new(90.0, aspect_ratio);
+    let camera = camera::Camera::new(v!(-2, 2, 1), v!(0, 0, -1), v!(0, 1, 0), 20.0, aspect_ratio);
 
     //create image buffer
     let mut buffer = RgbImage::new(img_width, img_height);
 
     //world
-    let r = f64::cos(std::f64::consts::PI / 4.0);
     let objects: Scene = vec![
         Box::new(Sphere::new(
-            //center
-            v!(-r, 0, -1),
-            r,
-            Lambertian::new(v!(0, 0, 1)),
+            v!(0, 0, -1),
+            0.5,
+            Lambertian::new(v!(0.1, 0.2, 0.5)),
         )),
         Box::new(Sphere::new(
-            //ground
-            v!(r, 0, -1),
-            r,
-            Lambertian::new(v!(1, 0, 0)),
+            v!(0, -100.5, -1),
+            100.0,
+            Lambertian::new(v!(0.8, 0.8, 0.0)),
+        )),
+        Box::new(Sphere::new(v!(-1.0, 0.0, -1.0), 0.5, Dielectric::new(1.5))),
+        Box::new(Sphere::new(
+            v!(1.0, 0.0, -1.0),
+            0.5,
+            Metal::new(v!(0.8, 0.6, 0.2), 0.0),
         )),
     ];
 
